@@ -37,6 +37,10 @@ const main = async () => {
       price: node.pricing?.priceRange?.start?.gross.amount,
     };
   });
+  const typesense = new Typesense.client({
+    nodes: [{ host: "localhost", port: "8108", protocol: "http" }],
+    apiKey: "xyz",
+  });
 };
 
 main();
