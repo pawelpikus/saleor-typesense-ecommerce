@@ -2,7 +2,7 @@
 import {
   ApolloClient,
   ApolloQueryResult,
-  createHttpLink,
+  HttpLink,
   InMemoryCache,
 } from "@apollo/client";
 import {
@@ -13,13 +13,8 @@ import fetch from "cross-fetch";
 
 const Typesense = require("typesense");
 
-const link = createHttpLink({
-  uri: "https://vercel.saleor.cloud/graphql/",
-  fetch,
-});
-
 const client = new ApolloClient({
-  uri: "https://vercel.saleor.cloud/graphql/",
+  link: new HttpLink({ uri: "https://vercel.saleor.cloud/graphql/", fetch }),
   cache: new InMemoryCache(),
   ssrMode: true,
 });
@@ -41,7 +36,29 @@ const main = async () => {
   const typesense = new Typesense.client({
     nodes: [{ host: "localhost", port: "8108", protocol: "http" }],
     apiKey: "xyz",
+    connectionTimeoutSeconds: 2,
   });
+
+  const productsSchema = {
+    name: "products",
+    num_documents: 0,
+    fields: [
+      { name: "name", type: "string" },
+      { name: "description", type: "string" },
+      { name: "category", type: "string" },
+      { name: "price", type: "float" },
+      { name: "image", type: "string" },
+    ],
+  };
+
+  await typesense.collections("products").delete();
+  await typesense.collections.create(productsSchema);
+
+  try {
+    await typesense.collections("products").documents().import(products);
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 main();
