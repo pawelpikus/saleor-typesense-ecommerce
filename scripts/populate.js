@@ -40,7 +40,8 @@ exports.__esModule = true;
 var client_1 = require("@apollo/client");
 var saleor_1 = require("../generated/saleor");
 var cross_fetch_1 = require("cross-fetch");
-var Typesense = require("typesense");
+// const Typesense = require("typesense");
+var typesense_1 = require("typesense");
 var client = new client_1.ApolloClient({
     link: new client_1.HttpLink({ uri: "https://vercel.saleor.cloud/graphql/", fetch: cross_fetch_1["default"] }),
     cache: new client_1.InMemoryCache(),
@@ -67,14 +68,19 @@ var main = function () { return __awaiter(void 0, void 0, void 0, function () {
                         price: (_f = (_e = (_d = node.pricing) === null || _d === void 0 ? void 0 : _d.priceRange) === null || _e === void 0 ? void 0 : _e.start) === null || _f === void 0 ? void 0 : _f.gross.amount
                     };
                 });
-                typesense = new Typesense.client({
-                    nodes: [{ host: "localhost", port: "8108", protocol: "http" }],
-                    apiKey: "xyz",
+                typesense = new typesense_1["default"].Client({
+                    nodes: [
+                        {
+                            host: "r6txjgnodhpc40s8p-1.a1.typesense.net",
+                            port: 443,
+                            protocol: "https"
+                        },
+                    ],
+                    apiKey: "U3mRxpUe58Y5PGgPIylTYq9wMnNDmRN5",
                     connectionTimeoutSeconds: 2
                 });
                 productsSchema = {
                     name: "products",
-                    num_documents: 0,
                     fields: [
                         { name: "name", type: "string" },
                         { name: "description", type: "string" },
@@ -86,21 +92,23 @@ var main = function () { return __awaiter(void 0, void 0, void 0, function () {
                 return [4 /*yield*/, typesense.collections("products")["delete"]()];
             case 2:
                 _c.sent();
-                return [4 /*yield*/, typesense.collections.create(productsSchema)];
+                return [4 /*yield*/, typesense.collections().create(productsSchema)];
             case 3:
                 _c.sent();
                 _c.label = 4;
             case 4:
-                _c.trys.push([4, 6, , 7]);
+                _c.trys.push([4, 7, , 8]);
+                if (!products) return [3 /*break*/, 6];
                 return [4 /*yield*/, typesense.collections("products").documents()["import"](products)];
             case 5:
                 _c.sent();
-                return [3 /*break*/, 7];
-            case 6:
+                _c.label = 6;
+            case 6: return [3 /*break*/, 8];
+            case 7:
                 e_1 = _c.sent();
                 console.log(e_1);
-                return [3 /*break*/, 7];
-            case 7: return [2 /*return*/];
+                return [3 /*break*/, 8];
+            case 8: return [2 /*return*/];
         }
     });
 }); };

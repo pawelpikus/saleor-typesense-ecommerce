@@ -11,7 +11,9 @@ import {
 } from "../generated/saleor";
 import fetch from "cross-fetch";
 
-const Typesense = require("typesense");
+// const Typesense = require("typesense");
+import Typesense from "typesense";
+import { CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
 
 const client = new ApolloClient({
   link: new HttpLink({ uri: "https://vercel.saleor.cloud/graphql/", fetch }),
@@ -33,15 +35,21 @@ const main = async () => {
       price: node.pricing?.priceRange?.start?.gross.amount,
     };
   });
-  const typesense = new Typesense.client({
-    nodes: [{ host: "localhost", port: "8108", protocol: "http" }],
-    apiKey: "xyz",
+
+  let typesense = new Typesense.Client({
+    nodes: [
+      {
+        host: "r6txjgnodhpc40s8p-1.a1.typesense.net",
+        port: 443,
+        protocol: "https",
+      },
+    ],
+    apiKey: "U3mRxpUe58Y5PGgPIylTYq9wMnNDmRN5",
     connectionTimeoutSeconds: 2,
   });
 
-  const productsSchema = {
+  let productsSchema: CollectionCreateSchema = {
     name: "products",
-    num_documents: 0,
     fields: [
       { name: "name", type: "string" },
       { name: "description", type: "string" },
@@ -52,10 +60,12 @@ const main = async () => {
   };
 
   await typesense.collections("products").delete();
-  await typesense.collections.create(productsSchema);
+  await typesense.collections().create(productsSchema);
 
   try {
-    await typesense.collections("products").documents().import(products);
+    if (products) {
+      await typesense.collections("products").documents().import(products);
+    }
   } catch (e) {
     console.log(e);
   }
