@@ -1,3 +1,4 @@
+//@ts-ignore
 import {
   ApolloClient,
   ApolloQueryResult,
@@ -7,9 +8,9 @@ import {
 import {
   LatestProductsDocument,
   LatestProductsQuery,
-} from "~/generated/saleor";
+} from "../generated/saleor";
+import fetch from "cross-fetch";
 
-//@ts-ignore
 const Typesense = require("typesense");
 
 const link = createHttpLink({
