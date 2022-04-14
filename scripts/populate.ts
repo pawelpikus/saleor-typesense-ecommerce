@@ -1,4 +1,3 @@
-//@ts-ignore
 import {
   ApolloClient,
   ApolloQueryResult,
@@ -12,7 +11,6 @@ import {
 import fetch from "cross-fetch";
 import Typesense from "typesense";
 import { CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
-require("dotenv").config();
 
 const client = new ApolloClient({
   link: new HttpLink({ uri: "https://vercel.saleor.cloud/graphql/", fetch }),
@@ -38,12 +36,12 @@ const main = async () => {
   let typesense = new Typesense.Client({
     nodes: [
       {
-        host: process.env.TYPESENSE_HOST,
-        port: process.env.TYPESENSE_PORT || 0,
+        host: "f05hglcz7e4ks3x9p-1.a1.typesense.net",
+        port: 443,
         protocol: "https",
       },
     ],
-    apiKey: process.env.ADMIN_API_KEY,
+    apiKey: "O5MhchvkTPR1PLjF3TvybiMLFow7jP5h",
     connectionTimeoutSeconds: 2,
   });
 

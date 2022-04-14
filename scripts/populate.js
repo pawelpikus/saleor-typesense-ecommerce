@@ -36,11 +36,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-//@ts-ignore
 var client_1 = require("@apollo/client");
 var saleor_1 = require("../generated/saleor");
 var cross_fetch_1 = require("cross-fetch");
-// const Typesense = require("typesense");
 var typesense_1 = require("typesense");
 var client = new client_1.ApolloClient({
     link: new client_1.HttpLink({ uri: "https://vercel.saleor.cloud/graphql/", fetch: cross_fetch_1["default"] }),
@@ -48,7 +46,7 @@ var client = new client_1.ApolloClient({
     ssrMode: true
 });
 var main = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var data, products, typesense, productsSchema, e_1;
+    var data, products, typesense, productsSchema, pSchema, e_1;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -71,12 +69,12 @@ var main = function () { return __awaiter(void 0, void 0, void 0, function () {
                 typesense = new typesense_1["default"].Client({
                     nodes: [
                         {
-                            host: "r6txjgnodhpc40s8p-1.a1.typesense.net",
+                            host: "f05hglcz7e4ks3x9p-1.a1.typesense.net",
                             port: 443,
                             protocol: "https"
                         },
                     ],
-                    apiKey: "U3mRxpUe58Y5PGgPIylTYq9wMnNDmRN5",
+                    apiKey: "O5MhchvkTPR1PLjF3TvybiMLFow7jP5h",
                     connectionTimeoutSeconds: 2
                 });
                 productsSchema = {
@@ -94,7 +92,8 @@ var main = function () { return __awaiter(void 0, void 0, void 0, function () {
                 _c.sent();
                 return [4 /*yield*/, typesense.collections().create(productsSchema)];
             case 3:
-                _c.sent();
+                pSchema = _c.sent();
+                console.log(pSchema);
                 _c.label = 4;
             case 4:
                 _c.trys.push([4, 7, , 8]);

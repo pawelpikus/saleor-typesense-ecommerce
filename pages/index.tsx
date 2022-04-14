@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { InstantSearch, SearchBox, Hits } from "react-instantsearch-dom";
 import TypesenseInstantSearchAdapter from "typesense-instantsearch-adapter";
 import Hit from "~/components/Hit";
+import { findResultsState } from "react-instantsearch-dom/server";
 
 const navigation = [
   { name: "Products", href: "#", current: true },
@@ -12,27 +13,26 @@ const navigation = [
 
 const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
   server: {
-    apiKey: "fx77g6l4MoVoJWZCER5Qjsse7Dr2T0uo", // Be sure to use the search-only-api-key
+    apiKey: "xSA2RSbevwkLljzQ8kCDX6NsxoTnHXNZ", // Be sure to use an API key that only allows search operations
     nodes: [
       {
-        host: "r6txjgnodhpc40s8p-1.a1.typesense.net",
+        host: "f05hglcz7e4ks3x9p-1.a1.typesense.net",
         port: 443,
         protocol: "https",
       },
     ],
+    cacheSearchResultsForSeconds: 2 * 60, // Cache search results from server. Defaults to 2 minutes. Set to 0 to disable caching.
   },
   additionalSearchParameters: {
     query_by: "name, category",
-    queryByWeights: "4,2",
+    query_by_weights: "4,2",
     num_typos: 1,
-    typoTokensThreshold: 1,
+    typo_tokens_threshold: 1,
   },
 });
+const searchClient = typesenseInstantsearchAdapter.searchClient;
 
-const Home: React.VFC<any> = ({
-  searchClient = typesenseInstantsearchAdapter.searchClient,
-  ...props
-}) => {
+const Home: React.VFC<any> = (...props) => {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="bg-white shadow-sm">
@@ -68,11 +68,12 @@ const Home: React.VFC<any> = ({
             </h1>
           </div>
         </header>
-        <main>
+
+        <main className="flex flex-col">
           <InstantSearch
             indexName="products"
-            {...props}
             searchClient={searchClient}
+            {...props}
           >
             <div className="px-8 mx-auto max-w-7xl">
               <SearchBox />
@@ -86,3 +87,21 @@ const Home: React.VFC<any> = ({
 };
 
 export default Home;
+
+// export async function getServerSideProps({ res }: any) {
+//   res.setHeader(
+//     "Cache-Control",
+//     `s-maxage=${1 * 60 * 60}, stale-while-revalidate=${24 * 60 * 60}`
+//   );
+
+//   const resultsState = await findResultsState(Home, {
+//     indexName: "products",
+//     searchClient: typesenseInstantsearchAdapter.searchClient,
+//   });
+
+//   return {
+//     props: {
+//       resultsState: JSON.parse(JSON.stringify(resultsState)),
+//     },
+//   };
+// }
